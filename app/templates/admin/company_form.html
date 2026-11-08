@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm"><div class="card-body">
+<h4 class="mb-3">{{ 'Edit' if c else 'Add' }} company</h4>
+<form method="post">{{ csrf() }}<div class="row g-3">
+  <div class="col-md-6"><label class="form-label">Company name</label><input name="companyname" class="form-control" value="{{ c.companyname if c }}" required></div>
+  <div class="col-md-6"><label class="form-label">Company email (login)</label><input type="email" name="companymail" class="form-control" value="{{ c.companymail if c }}" required></div>
+  <div class="col-md-4"><label class="form-label">Full-time CTC (annual)</label><input type="number" step="any" name="fulltimeCTCannual" class="form-control" value="{{ c.fulltimeCTCannual if c and c.fulltimeCTCannual is not none }}"></div>
+  <div class="col-md-4"><label class="form-label">6-month pay per month</label><input type="number" step="any" name="sixmonthpay" class="form-control" value="{{ c.sixmonthpaypermonth if c and c.sixmonthpaypermonth is not none }}"></div>
+  <div class="col-md-4"><label class="form-label">Student point of contact</label><select name="poc" class="form-select"><option value="">— None —</option>{% for st in students %}<option value="{{ st.roll }}" {{ 'selected' if c and c.student_point_of_contact_roll == st.roll }}>{{ st.name }} · {{ st.roll }} · {{ st.stream.name }}</option>{% endfor %}</select><div class="form-text">Company can view this student's full academic and contact profile.</div></div>
+  <div class="col-md-6"><label class="form-label">Eligible streams</label>
+    <select name="streams" multiple class="form-select" size="5">
+      {% for s in streams %}<option value="{{ s.deptid }}" {{ 'selected' if c and s in c.streams }}>{{ s.name }} ({{ s.course.name }})</option>{% endfor %}
+    </select><div class="form-text">Ctrl/Cmd-click to select several.</div></div>
+  <div class="col-md-6"><label class="form-label">Company groups</label>
+    <select name="company_groups" multiple class="form-select" size="4">{% for g in company_groups %}<option value="{{ g.groupid }}" {{ 'selected' if c and g in c.company_groups }}>{{ g.groupname }}</option>{% endfor %}</select><div class="form-text">Create groups under Admin → Groups.</div></div>
+  <div class="col-md-6"><label class="form-label">Password {{ '(leave blank to keep)' if c }}</label>
+    <input type="password" name="password" minlength="6" class="form-control" {{ 'required' if not c }}></div>
+</div>
+<button class="btn btn-primary mt-4">Save</button> <a class="btn btn-link mt-4" href="{{ url_for('admin.companies') }}">Cancel</a></form>
+</div></div>
+{% endblock %}

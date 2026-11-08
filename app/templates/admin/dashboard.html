@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3 class="mb-4">Placement overview</h3>
+<div class="row g-3 mb-4">
+  {% for label, key in [('Approved students','students'),('Pending approvals','pending'),('Companies','companies'),('Job postings','jobs'),('Applications','applications'),('Students who applied','applicants'),('Students placed','placed')] %}
+  <div class="col-6 col-md-4 col-lg-2"><div class="card text-center shadow-sm"><div class="card-body">
+    <div class="display-6">{{ stats[key] }}</div><div class="small text-muted">{{ label }}</div></div></div></div>
+  {% endfor %}
+</div>
+<div class="mb-4 d-flex gap-2 flex-wrap"><a class="btn btn-success" href="{{ url_for('admin.placed') }}">View all placed students</a><a class="btn btn-primary" href="{{ url_for('admin.reports') }}">Open placement analytics</a></div>
+<div class="row g-4">
+  <div class="col-md-6"><div class="card shadow-sm"><div class="card-header">Applications per company</div>
+    <table class="table mb-0"><tbody>{% for n, c in per_company %}<tr><td>{{ n }}</td><td class="text-end">{{ c }}</td></tr>
+    {% else %}<tr><td class="text-muted">No data yet</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="col-md-6"><div class="card shadow-sm"><div class="card-header">Students applied per stream</div>
+    <table class="table mb-0"><tbody>{% for n, c in per_stream %}<tr><td>{{ n }}</td><td class="text-end">{{ c }}</td></tr>
+    {% else %}<tr><td class="text-muted">No data yet</td></tr>{% endfor %}</tbody></table></div></div>
+</div>
+{% if stats.pending %}<a class="btn btn-warning mt-4" href="{{ url_for('admin.students') }}">Review {{ stats.pending }} pending registration(s)</a>{% endif %}
+<h4 class="mt-4">Placed students</h4>
+<div class="table-responsive"><table class="table table-striped bg-white"><thead><tr><th>Roll</th><th>Name</th><th>Stream</th><th>Company</th><th>Role</th><th>CTC (LPA)</th><th>Placed at</th></tr></thead><tbody>
+{% for s in placed_students %}<tr><td>{{ s.roll }}</td><td>{{ s.name }}</td><td>{{ s.stream.name }}</td><td>{{ s.placed_company_name }}</td><td>{{ s.placed_job_title }}</td><td>{{ '₹%.2f'|format(s.placed_ctc) if s.placed_ctc is not none else '—' }}</td><td>{{ s.placed_at.strftime('%d %b %Y %H:%M') if s.placed_at else '—' }}</td></tr>{% else %}<tr><td colspan="7" class="text-muted">No students placed yet.</td></tr>{% endfor %}</tbody></table></div>
+
+{% endblock %}

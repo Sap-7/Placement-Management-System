@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm"><div class="card-body">
+  <h4 class="mb-3">{{ 'Edit' if s else 'Add' }} student</h4>
+  <form method="post">{{ csrf() }}
+    {% include '_student_fields.html' %}
+    <button class="btn btn-primary mt-4">Save</button>
+    <a href="{{ url_for('admin.students') }}" class="btn btn-link mt-4">Cancel</a>
+  </form>
+</div></div>
+{% endblock %}

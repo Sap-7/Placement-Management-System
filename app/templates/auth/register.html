@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="card shadow-sm"><div class="card-body">
+  <h4 class="mb-3">Student registration</h4>
+  <form method="post">{{ csrf() }}
+    {% include '_student_fields.html' %}
+    <button class="btn btn-primary mt-4">Register</button>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-link mt-4">Back to login</a>
+  </form>
+</div></div>
+{% endblock %}

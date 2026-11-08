@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm"><div class="card-body">
+<h4 class="mb-1">My profile</h4>
+<p class="text-muted small">Roll {{ current_user.roll }} · {{ current_user.stream.name }} · CGPA {{ current_user.CGPA }} · Group: {{ current_user.group.groupname if current_user.group else 'not assigned' }}.
+  Roll, CGPA, stream and course are managed by the admin.</p>
+<form method="post">{{ csrf() }}<div class="row g-3">
+  {% set s = current_user %}
+  <div class="col-md-6"><label class="form-label">Name</label><input name="name" class="form-control" value="{{ s.name }}" required></div>
+  <div class="col-md-6"><label class="form-label">Mobile</label><input name="mobileno" class="form-control" value="{{ s.mobileno }}" required></div>
+  <div class="col-md-6"><label class="form-label">Personal email</label><input type="email" name="personalemail" class="form-control" value="{{ s.personalemail }}" required></div>
+  <div class="col-md-6"><label class="form-label">College email</label><input type="email" name="collegeemail" class="form-control" value="{{ s.collegeemail or '' }}"></div>
+  <div class="col-md-4"><label class="form-label">10th %</label><input type="number" step="0.01" name="marks_10" class="form-control" value="{{ s.marks_10 }}" required></div>
+  <div class="col-md-4"><label class="form-label">12th %</label><input type="number" step="0.01" name="marks_12" class="form-control" value="{{ s.marks_12 if s.marks_12 is not none }}"></div>
+  <div class="col-md-4"><label class="form-label">Diploma %</label><input type="number" step="0.01" name="diplomamarks" class="form-control" value="{{ s.diplomamarks if s.diplomamarks is not none }}"></div>
+  <div class="col-md-6"><label class="form-label">New password (optional)</label><input type="password" name="password" minlength="6" class="form-control"></div>
+</div><button class="btn btn-primary mt-4">Update profile</button></form>
+</div></div>
+{% endblock %}

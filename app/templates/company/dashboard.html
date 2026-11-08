@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h3>{{ current_user.companyname }} — job postings</h3>
+  <a class="btn btn-primary" href="{{ url_for('company.post_job') }}">+ Post job</a></div>
+<table class="table bg-white align-middle"><thead><tr><th>Title</th><th>Deadline</th><th>Min CGPA</th><th>Status</th><th>Applicants</th></tr></thead>
+{% for j in jobs %}<tr><td>{{ j.title }}</td><td>{{ j.deadline.strftime('%d %b %Y %H:%M') }}</td><td>{{ j.min_cgpa }}</td>
+  <td>{% if j.is_open %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Closed</span>{% endif %}</td>
+  <td>{{ j.applications|length }}</td></tr>
+{% else %}<tr><td colspan="5" class="text-muted">No postings yet.</td></tr>{% endfor %}
+</table>
+<div class="alert alert-info">Published job postings are immutable: they cannot be edited or deleted. Check all details before posting.</div>
+{% if current_user.poc %}
+<div class="card mt-4"><div class="card-header"><strong>Student point of contact — full profile</strong></div><div class="card-body">
+<div class="row">
+<div class="col-md-6"><p><strong>Name:</strong> {{ current_user.poc.name }}</p><p><strong>Roll:</strong> {{ current_user.poc.roll }}</p><p><strong>Stream / Course:</strong> {{ current_user.poc.stream.name }} / {{ current_user.poc.course.name }}</p><p><strong>Graduation year:</strong> {{ current_user.poc.yearofgraduation }}</p><p><strong>CGPA:</strong> {{ current_user.poc.CGPA }}</p></div>
+<div class="col-md-6"><p><strong>Personal email:</strong> {{ current_user.poc.personalemail }}</p><p><strong>College email:</strong> {{ current_user.poc.collegeemail or '—' }}</p><p><strong>Mobile:</strong> {{ current_user.poc.mobileno }}</p><p><strong>Date of birth:</strong> {{ current_user.poc.DOB }}</p><p><strong>Gender:</strong> {{ current_user.poc.Gender }}</p><p><strong>10th / 12th / Diploma:</strong> {{ current_user.poc.marks_10 }} / {{ current_user.poc.marks_12 or '—' }} / {{ current_user.poc.diplomamarks or '—' }}</p></div>
+</div></div></div>{% endif %}
+{% endblock %}

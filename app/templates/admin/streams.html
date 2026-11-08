@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Streams</h3>
+<form method="post" class="row g-2 mb-3">{{ csrf() }}
+  <div class="col-auto"><input name="name" class="form-control" placeholder="Stream name" required></div>
+  <div class="col-auto"><select name="courseid" class="form-select" required>{% for c in courses %}<option value="{{ c.courseid }}">{{ c.name }}</option>{% endfor %}</select></div>
+  <div class="col-auto"><button class="btn btn-primary">Add stream</button></div></form>
+<table class="table bg-white align-middle"><thead><tr><th>ID</th><th>Name</th><th>Course</th><th>Students</th><th></th></tr></thead>
+{% for s in streams %}<tr><td>{{ s.deptid }}</td>
+  <td><form method="post" action="{{ url_for('admin.stream_edit', sid=s.deptid) }}" class="d-flex gap-2">{{ csrf() }}
+    <input name="name" value="{{ s.name }}" class="form-control form-control-sm"><button class="btn btn-sm btn-outline-primary">Rename</button></form></td>
+  <td>{{ s.course.name }}</td><td>{{ s.noofstudents }}</td>
+  <td class="text-end"><form method="post" action="{{ url_for('admin.stream_delete', sid=s.deptid) }}" onsubmit="return confirm('Delete stream?')">{{ csrf() }}<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>{% endfor %}
+</table>
+{% endblock %}

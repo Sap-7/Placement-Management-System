@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h3>Companies</h3>
+  <a class="btn btn-primary" href="{{ url_for('admin.company_form') }}">+ Add company</a></div>
+<div class="table-responsive"><table class="table bg-white align-middle">
+<thead><tr><th>Name</th><th>Login email</th><th>Eligible streams</th><th>Student POC</th><th>CTC (annual)</th><th>6-mo pay/mo</th><th></th></tr></thead>
+{% for c in companies %}<tr><td>{{ c.companyname }}</td><td>{{ c.companymail }}</td>
+  <td>{{ c.streams|map(attribute='name')|join(', ') or '—' }}</td>
+  <td>{{ c.poc.name ~ ' (' ~ c.poc.roll ~ ')' if c.poc else '—' }}</td>
+  <td>{{ c.fulltimeCTCannual or '—' }}</td><td>{{ c.sixmonthpaypermonth or '—' }}</td>
+  <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.company_form', cid=c.companyid) }}">Edit</a>
+   <form method="post" action="{{ url_for('admin.company_delete', cid=c.companyid) }}" class="d-inline" onsubmit="return confirm('Delete company and its jobs?')">{{ csrf() }}<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="7" class="text-muted">No companies yet.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

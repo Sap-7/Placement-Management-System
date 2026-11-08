@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-5">
+<div class="card shadow-sm"><div class="card-body">
+  <h4 class="mb-3">Sign in</h4>
+  <form method="post">{{ csrf() }}
+    <div class="mb-3"><label class="form-label">I am a</label>
+      <select name="role" class="form-select">
+        <option value="student">Student</option><option value="company">Company</option><option value="admin">Admin</option>
+      </select></div>
+    <div class="mb-3"><label class="form-label">Roll / Email / Username</label>
+      <input name="identifier" class="form-control" required autofocus></div>
+    <div class="mb-3"><label class="form-label">Password</label>
+      <input type="password" name="password" class="form-control" required></div>
+    <button class="btn btn-primary w-100">Login</button>
+  </form>
+  <hr><a href="{{ url_for('auth.register') }}">New student? Register here</a>
+</div></div></div></div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3 class="mb-3">Jobs you are eligible for</h3>
+{% if current_user.is_placed %}<div class="alert alert-success"><strong>You are placed!</strong> {{ current_user.placed_company_name }} — {{ current_user.placed_job_title }}. You cannot apply for any other company. <a href="{{ url_for('student.my_applications') }}">View applications</a></div>{% endif %}
+<div class="row g-3">
+{% for j in jobs %}
+  <div class="col-md-6"><div class="card shadow-sm h-100"><div class="card-body">
+    <h5 class="card-title">{{ j.title }} <small class="text-muted">· {{ j.company.companyname }}</small></h5>
+    <p class="card-text">{{ j.description }}</p>
+    <p class="small text-muted mb-1">Min CGPA: {{ j.min_cgpa }}
+      {% if j.company.fulltimeCTCannual %} · CTC: {{ j.company.fulltimeCTCannual }}{% endif %}
+      {% if j.company.sixmonthpaypermonth %} · Internship: {{ j.company.sixmonthpaypermonth }}/mo{% endif %}</p>
+    <p class="small mb-3">Deadline: <strong>{{ j.deadline.strftime('%d %b %Y %H:%M') }}</strong></p>
+    {% if current_user.is_placed %}<span class="badge bg-secondary">Applications locked — already placed</span>
+    {% elif j.jobid in applied %}<span class="badge bg-success">Applied</span>
+    {% elif j.deadline < now %}<span class="badge bg-secondary">Closed</span>
+    {% else %}<form method="post" action="{{ url_for('student.apply', jobid=j.jobid) }}">{{ csrf() }}<button class="btn btn-primary btn-sm">Apply</button></form>{% endif %}
+  </div></div></div>
+{% else %}<p class="text-muted">No eligible postings right now.</p>{% endfor %}
+</div>
+{% endblock %}

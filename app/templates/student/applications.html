@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>My applications</h3>
+{% if current_user.is_placed %}<div class="alert alert-success"><strong>You are placed!</strong> {{ current_user.placed_company_name }} — {{ current_user.placed_job_title }}{% if current_user.placed_at %} · {{ current_user.placed_at.strftime('%d %b %Y %H:%M') }}{% endif %}. You cannot apply to or continue with other companies.</div>{% endif %}
+<div class="table-responsive"><table class="table table-striped bg-white align-middle"><thead><tr><th>Company / Job</th><th>Applied at</th><th>Status</th><th>OA date</th><th>Interview date</th></tr></thead><tbody>
+{% for a in apps %}<tr><td>{{ a.job.company.companyname }}<br><strong>{{ a.job.title }}</strong></td><td>{{ a.applied_at.strftime('%d %b %Y %H:%M') }}</td><td><span class="badge {% if a.status=='Placed' %}bg-success{% elif a.status=='Rejected' %}bg-danger{% elif a.status=='Shortlisted' %}bg-primary{% elif a.status=='Withdrawn' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">{{ a.status }}</span></td><td>{{ a.oa_date.strftime('%d %b %Y %H:%M') if a.oa_date else '—' }}</td><td>{{ a.interview_date.strftime('%d %b %Y %H:%M') if a.interview_date else '—' }}</td></tr>
+{% else %}<tr><td colspan="5" class="text-muted">You haven't applied anywhere yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

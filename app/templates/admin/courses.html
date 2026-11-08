@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Courses</h3>
+<form method="post" class="row g-2 mb-3">{{ csrf() }}
+  <div class="col-auto"><input name="name" class="form-control" placeholder="Course name" required></div>
+  <div class="col-auto"><button class="btn btn-primary">Add course</button></div></form>
+<table class="table bg-white"><thead><tr><th>ID</th><th>Name</th><th>Streams</th><th></th></tr></thead>
+{% for c in courses %}<tr><td>{{ c.courseid }}</td><td>{{ c.name }}</td><td>{{ c.streams|length }}</td>
+  <td class="text-end"><form method="post" action="{{ url_for('admin.course_delete', cid=c.courseid) }}" onsubmit="return confirm('Delete course?')">{{ csrf() }}<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>{% endfor %}
+</table>
+{% endblock %}

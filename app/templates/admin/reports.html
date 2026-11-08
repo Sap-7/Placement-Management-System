@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Placement Analytics | Placement Portal{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div><h2 class="mb-1">Placement analytics</h2><div class="text-muted">Approved students only · Annual CTC in LPA · CTC statistics use records with known CTC.</div></div>
+  <a class="btn btn-outline-primary" href="{{ url_for('admin.reports_export') }}">Export analytics CSV</a>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card h-100 shadow-sm"><div class="card-body"><div class="text-muted small">Approved cohort</div><div class="display-6">{{ report.approved_count }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card h-100 shadow-sm"><div class="card-body"><div class="text-muted small">Students placed</div><div class="display-6">{{ report.placed_count }}</div><div class="small text-muted">{{ '%.2f'|format(report.placement_percentage) }}% of approved cohort</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card h-100 shadow-sm"><div class="card-body"><div class="text-muted small">Average annual CTC</div><div class="display-6">{% if report.average_ctc is not none %}₹{{ '%.2f'|format(report.average_ctc) }}{% else %}—{% endif %}</div><div class="small text-muted">LPA · {{ report.ctc_count }} records</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card h-100 shadow-sm"><div class="card-body"><div class="text-muted small">Median annual CTC</div><div class="display-6">{% if report.median_ctc is not none %}₹{{ '%.2f'|format(report.median_ctc) }}{% else %}—{% endif %}</div><div class="small text-muted">LPA</div></div></div></div>
+</div>
+<div class="alert alert-info py-2">Group/stream placement % = placed students ÷ approved students in that cohort. Company share = students hired by that company ÷ all placed students.</div>
+<section class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold">Group-wise placement</div>
+  <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Student group</th><th class="text-end">Students</th><th class="text-end">Placed</th><th class="text-end">Placement %</th><th class="text-end">Avg CTC (LPA)</th><th class="text-end">Median CTC (LPA)</th></tr></thead><tbody>
+  {% for r in report.group_rows %}<tr><td>{{ r.name }}</td><td class="text-end">{{ r.total }}</td><td class="text-end">{{ r.placed }}</td><td class="text-end">{{ '%.2f'|format(r.percentage) }}%</td><td class="text-end">{{ '%.2f'|format(r.average_ctc) if r.average_ctc is not none else '—' }}</td><td class="text-end">{{ '%.2f'|format(r.median_ctc) if r.median_ctc is not none else '—' }}</td></tr>
+  {% else %}<tr><td colspan="6" class="text-muted">No student groups found.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+<section class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold">Stream-wise placement</div>
+  <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Stream</th><th class="text-end">Students</th><th class="text-end">Placed</th><th class="text-end">Placement %</th><th class="text-end">Avg CTC (LPA)</th><th class="text-end">Median CTC (LPA)</th></tr></thead><tbody>
+  {% for r in report.stream_rows %}<tr><td>{{ r.name }}</td><td class="text-end">{{ r.total }}</td><td class="text-end">{{ r.placed }}</td><td class="text-end">{{ '%.2f'|format(r.percentage) }}%</td><td class="text-end">{{ '%.2f'|format(r.average_ctc) if r.average_ctc is not none else '—' }}</td><td class="text-end">{{ '%.2f'|format(r.median_ctc) if r.median_ctc is not none else '—' }}</td></tr>
+  {% else %}<tr><td colspan="6" class="text-muted">No streams found.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+<section class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold">Company-wise placement</div>
+  <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Company</th><th class="text-end">Students placed</th><th class="text-end">Share of placements</th><th class="text-end">Avg CTC (LPA)</th><th class="text-end">Median CTC (LPA)</th></tr></thead><tbody>
+  {% for r in report.company_rows %}<tr><td>{{ r.name }}</td><td class="text-end">{{ r.placed }}</td><td class="text-end">{{ '%.2f'|format(r.share) }}%</td><td class="text-end">{{ '%.2f'|format(r.average_ctc) if r.average_ctc is not none else '—' }}</td><td class="text-end">{{ '%.2f'|format(r.median_ctc) if r.median_ctc is not none else '—' }}</td></tr>
+  {% else %}<tr><td colspan="5" class="text-muted">No company records found.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+<section class="card shadow-sm">
+  <div class="card-header fw-semibold">Placed student register</div>
+  <div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead class="table-light"><tr><th>Roll</th><th>Student</th><th>Group</th><th>Stream</th><th>Company</th><th>Role</th><th class="text-end">CTC (LPA)</th><th>Placed at</th></tr></thead><tbody>
+  {% for s in placed_students %}<tr><td>{{ s.roll }}</td><td>{{ s.name }}</td><td>{{ s.group.groupname if s.group else 'Unassigned' }}</td><td>{{ s.stream.name if s.stream else 'Unassigned' }}</td><td>{{ s.placed_company_name or '—' }}</td><td>{{ s.placed_job_title or '—' }}</td><td class="text-end">{{ '%.2f'|format(s.placed_ctc) if s.placed_ctc is not none else '—' }}</td><td>{{ s.placed_at.strftime('%d %b %Y') if s.placed_at else '—' }}</td></tr>
+  {% else %}<tr><td colspan="8" class="text-muted">No placements recorded yet.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

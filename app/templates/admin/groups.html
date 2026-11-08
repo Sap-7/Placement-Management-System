@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Student groups <small class="text-muted fs-6">(groups of streams)</small></h3>
+<form method="post" class="row g-2 mb-3">{{ csrf() }}<input type="hidden" name="kind" value="student">
+  <div class="col-md-3"><input name="groupname" class="form-control" placeholder="e.g. Circuital Core" required></div>
+  <div class="col-md-6"><select name="members" multiple class="form-select" size="4" required>{% for s in streams %}<option value="{{ s.deptid }}">{{ s.name }} ({{ s.course.name }})</option>{% endfor %}</select><div class="form-text">Select one or more streams.</div></div>
+  <div class="col-md-3"><button class="btn btn-primary">Create student group</button></div></form>
+<table class="table bg-white align-middle"><thead><tr><th>Group</th><th>Included streams</th><th>Assigned students</th><th></th></tr></thead>
+{% for g in groups %}<tr><td>{{ g.groupname }}</td><td>{{ g.streams|map(attribute='name')|join(', ') }}</td><td>{{ g.students|length }}</td>
+<td class="text-end"><form method="post" action="{{ url_for('admin.group_delete', gid=g.groupid) }}" onsubmit="return confirm('Delete group?')">{{ csrf() }}<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="4" class="text-muted">No student groups yet.</td></tr>{% endfor %}</table>
+<hr class="my-4">
+<h3>Company groups <small class="text-muted fs-6">(groups of companies)</small></h3>
+<form method="post" class="row g-2 mb-3">{{ csrf() }}<input type="hidden" name="kind" value="company">
+  <div class="col-md-3"><input name="groupname" class="form-control" placeholder="e.g. Software" required></div>
+  <div class="col-md-6"><select name="members" multiple class="form-select" size="4" required>{% for c in companies %}<option value="{{ c.companyid }}">{{ c.companyname }}</option>{% endfor %}</select><div class="form-text">Select one or more companies. Add companies first.</div></div>
+  <div class="col-md-3"><button class="btn btn-primary">Create company group</button></div></form>
+<table class="table bg-white align-middle"><thead><tr><th>Group</th><th>Companies</th><th></th></tr></thead>
+{% for g in company_groups %}<tr><td>{{ g.groupname }}</td><td>{{ g.companies|map(attribute='companyname')|join(', ') }}</td><td class="text-end"><form method="post" action="{{ url_for('admin.company_group_delete', gid=g.groupid) }}" onsubmit="return confirm('Delete group?')">{{ csrf() }}<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="3" class="text-muted">No company groups yet.</td></tr>{% endfor %}</table>
+{% endblock %}
